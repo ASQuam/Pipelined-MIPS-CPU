@@ -1,0 +1,22 @@
+# Vivado project runs (regenerable build output)
+*.runs/
+*.cache/
+*.hw/
+*.ip_user_files/
+*.sim/
+*.srcs/**/ip/
+.Xil/
+vivado*.jou
+vivado*.log
+vivado*.str
+webtalk*.jou
+webtalk*.log
+*.dcp
+*.bit
+*.bin
+*.mmi
+*.ltx
+
+# OS junk
+.DS_Store
+Thumbs.db

@@ -64,14 +64,6 @@ primitives:
 
 ![Floorplanning](assets/floorplanning.png)
 
-## Timing
-
-Implementation completed with a written bitstream, but timing closure was **not** fully
-met at this clock period — worst negative slack was about **-1.6 ns** post-route. Rather
-than hide that, it's a fair note on where this design stands: the datapath is functionally
-correct and verified in simulation, but running it on real hardware at full speed would
-need either a slower clock or further critical-path optimization (the PC and ALU adder
-chains were the dominant paths in the report).
 
 ## Tools
 

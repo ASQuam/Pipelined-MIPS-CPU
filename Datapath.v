@@ -1,19 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: Penn State
+// University: Penn State
 // Engineer: Arik Quam
-// 
-// Create Date: 4/29/2026
-// Design Name: Final Project - Extra Credit Option
-// Module Name: datapath
-// Project Name: Final Project - Extra Credit Option
-// Target Devices: XC7Z010-CLG400-1
-// Description: Implementation of Final Project, Forwarding/Stalls/Extra Credit
-// 
-// Instructions to implement:
-//   Address 100: lw $v0, 00($at)  ->  lw $2, 0($1)
-//   Address 104: lw $v1, 04($at)  ->  lw $3, 4($1)
-//   Assume register $at ($1) has value 0
 //
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -24,10 +12,6 @@
 // Input:  clk - clock signal
 // Output: None (all signals are internal)
 //
-// You need to:
-// 1. Declare all internal wires to connect the modules
-// 2. Instantiate all 9 modules and connect them properly
-// 3. Decode the instruction fields (op, rs, rt, rd, func, imm) from dinstOut
 //==============================================================================
 
 module Datapath(
@@ -36,8 +20,7 @@ module Datapath(
 );
 
     
-    // TODO: Declare wires for IF stage
-    // Hint: You need wires for pc, nextpc, instOut
+    // Declare wires for IF stage
     wire [31:0] pc;
     wire [31:0] pc4;
     wire [31:0] nextpc;
@@ -45,8 +28,7 @@ module Datapath(
     wire [31:0] dinstOut;
     wire [31:0] dpc4;
     
-    // TODO: Declare wire for IF/ID pipeline register output
-    // Hint: dinstOut holds the instruction in the ID stage
+    // Declare wire for IF/ID pipeline register output
     wire [5:0] op;
     wire [4:0] rs;
     wire [4:0] rt;
@@ -55,9 +37,7 @@ module Datapath(
     wire [15:0] imm;
     wire [25:0] addr; // jump address
     
-    // TODO: Decode instruction fields from dinstOut
-    // Hint: Use assign statements to extract:
-    //   Example: op    = dinstOut[31:26]  (6 bits - opcode)
+    // Decode instruction fields from dinstOut
     assign op = dinstOut[31:26];
     assign rs = dinstOut[25:21];
     assign rt = dinstOut[20:16];
@@ -66,8 +46,7 @@ module Datapath(
     assign imm = dinstOut[15:0];
     assign addr = dinstOut[25:0];
     
-    // TODO: Declare wires for control unit outputs
-    // Hint: wreg, m2reg, wmem, aluc[3:0], aluimm, regrt
+    // Declare wires for control unit outputs
     wire wreg; // write register enable (1 bit)
     wire m2reg; // memory to register (1 bit)
     wire wmem; // write memory enable (1 bit)
@@ -80,8 +59,7 @@ module Datapath(
     wire shift; // shift indiciation
     wire sext; // sign extent vs zero extend
     
-    // TODO: Declare wires for ID stage
-    // Hint: destReg[4:0], qa[31:0], qb[31:0], imm32[31:0]
+    // Declare wires for ID stage
     wire [4:0] destReg; // destination register (5 bits)
     wire [31:0] qa; // register data A (32 bits)
     wire [31:0] qb; // register data B (32 bits)
@@ -98,8 +76,7 @@ module Datapath(
     wire stall; // pipeline stall
     wire wpcir; // write enable for PC and IF/ID
     
-    // TODO: Declare wires for ID/EXE pipeline register outputs
-    // Hint: Use 'e' prefix for EXE stage signals (ewreg, em2reg, etc.)
+    // Declare wires for ID/EXE pipeline register outputs
     wire ewreg;   // write register enable
     wire em2reg;  // memory to register
     wire ewmem; // write memory enable
@@ -185,25 +162,25 @@ module Datapath(
     // STAGE 1: INSTRUCTION FETCH (IF) - Instantiate modules
     //==========================================================================
     
-    // TODO: Instantiate PC (Program Counter)
+    // Instantiate PC (Program Counter)
     PC program_counter (
         .clk (clk),
         .nextpc (nextpc),
         .pc (pc),
         .wpcir(wpcir)
     );
-    // TODO: Instantiate PCAdd4 (PC + 4 Adder)
+    // Instantiate PCAdd4 (PC + 4 Adder)
     PCAdd4 pc_add (
         .pc (pc),
         .pc4 (pc4) //adjusted name
     );
-    // TODO: Instantiate IM (Instruction Memory)
+    // Instantiate IM (Instruction Memory)
     IM instr_mem (
         .a (pc), // changed name to fit project
         .inst (instOut) // changed name to fit project
     );
     
-    // TODO: Instantiate IFID (IF/ID Pipeline Register)
+    // Instantiate IFID (IF/ID Pipeline Register)
     IFID pipe_reg (
         .clk (clk),
         .instOut (instOut),
@@ -217,7 +194,7 @@ module Datapath(
     // STAGE 2: INSTRUCTION DECODE (ID) - Instantiate modules
     //==========================================================================
     
-    // TODO: Instantiate CU (Control Unit)
+    // Instantiate CU (Control Unit)
     CU control_unit(
         .op (op),
         .func (func),
@@ -235,7 +212,7 @@ module Datapath(
         .shift(shift),
         .sext(sext) 
     );
-    // TODO: Instantiate Regfile (Register File)
+    // Instantiate Regfile (Register File)
     Regfile register_file(
         .clk (clk),
         .rs (rs),
@@ -246,14 +223,14 @@ module Datapath(
         .qa (qa),
         .qb (qb)
     );
-    // TODO: Instantiate Mux (Regrt Multiplexer)
+    // Instantiate Mux (Regrt Multiplexer)
     Mux regrt_mux(
         .a (rd), // adjusted name
         .b (rt), // adjusted name
         .sel (regrt), // adjusted name
         .out (destReg)  // adjusted name   
     );
-    // TODO: Instantiate Ext (Sign Extender)
+    // Instantiate Ext (Sign Extender)
     Ext sign_ext(
         .imm (imm),
         .sext(sext),
@@ -322,7 +299,7 @@ module Datapath(
     
     assign wpcir = ~stall;
     
-    // TODO: Instantiate IDEXE (ID/EXE Pipeline Register)
+    // Instantiate IDEXE (ID/EXE Pipeline Register)
     IDEXE pipeline_reg(
         .clk (clk),
         .wreg (wreg),
@@ -447,21 +424,7 @@ endmodule
 //------------------------------------------------------------------------------
 // PC - Program Counter
 //------------------------------------------------------------------------------
-// Holds the address of the current instruction being fetched.
-// 
-//
-// Inputs:
-//   clk     - clock signal (update PC on positive edge)
-//   nextpc  - the next PC value (PC + 4)
-//
-// Outputs:
-//   pc      - current program counter value (32 bits)
-//
-// Hints:
-//   - Use an initial block to set pc = 100
-//   - Use always @(posedge clk) to update pc with nextpc
-//   - Use non-blocking assignment (<=) in sequential logic
-//------------------------------------------------------------------------------
+
 
 module PC(
     input clk,
@@ -469,7 +432,7 @@ module PC(
     input wpcir,
     output reg [31:0] pc
 );
-    // TODO: Implement the program counter
+    // Implement the program counter
     // Initialize pc to 100, update to nextpc on each clock edge
     // pc to 100
     initial
@@ -492,23 +455,13 @@ endmodule
 //------------------------------------------------------------------------------
 // PCAdd4 - PC + 4 Adder
 //------------------------------------------------------------------------------
-// Calculates the address of the next sequential instruction.
-//
-// Inputs:
-//   pc      - current program counter value (32 bits)
-//
-// Outputs:
-//   nextpc  - next program counter value (pc + 4) (32 bits)
-//
-// Hints:
-//   - This is combinational logic, use always @(*)
-//------------------------------------------------------------------------------
+
 
 module PCAdd4(
     input [31:0] pc,
     output reg [31:0] pc4
 );
-    // TODO: Implement the PC + 4 adder
+    // Implement the PC + 4 adder
     always @(*)
     begin
         pc4 = pc + 4;
@@ -520,19 +473,7 @@ endmodule
 //------------------------------------------------------------------------------
 // IM - Instruction Memory
 //------------------------------------------------------------------------------
-// Stores the program instructions. Read-only memory.
-// Address 100 (index 25) and 104 (index 26) contain the lw instructions.
-//
-// Inputs:
-//   pc      - program counter (address to read from) (32 bits)
-//
-// Outputs:
-//   instOut - instruction at the given address (32 bits)
-//
-// Hints:
-//   - Declare a reg array: reg [31:0] instructions [0:127]
-//   - Use initial block 
-//------------------------------------------------------------------------------
+
 
 module IM(
     input [31:0] a, // rom address
@@ -585,20 +526,7 @@ endmodule
 //------------------------------------------------------------------------------
 // IFID - IF/ID Pipeline Register
 //------------------------------------------------------------------------------
-// Stores the instruction fetched in IF stage for use in ID stage.
-// Updates on the positive edge of the clock.
-//
-// Inputs:
-//   clk     - clock signal
-//   instOut - instruction from instruction memory (32 bits)
-//
-// Outputs:
-//   dinstOut - instruction passed to ID stage (32 bits)
-//
-// Hints:
-//   - Use always @(posedge clk)
-//   - Use non-blocking assignment (<=)
-//------------------------------------------------------------------------------
+
 
 module IFID(
     input clk,
@@ -608,7 +536,7 @@ module IFID(
     output reg [31:0] dinstOut,
     output reg [31:0] dpc4
 );
-    // TODO: Implement the IF/ID pipeline register
+    // Implement the IF/ID pipeline register
     always @(posedge clk) 
     begin
         if (wpcir) 
@@ -627,24 +555,7 @@ endmodule
 //------------------------------------------------------------------------------
 // CU - Control Unit
 //------------------------------------------------------------------------------
-// Generates control signals based on the opcode and function code.
-//
-// Inputs:
-//   op      - opcode field from instruction (6 bits)
-//   func    - function field from instruction (6 bits)
-//
-// Outputs:
-//   wreg    - write enable for register file (1 bit)
-//   m2reg   - memory to register (1 = load data from memory) (1 bit)
-//   wmem    - write enable for data memory (1 bit)
-//   aluc    - ALU control signals (4 bits)
-//   aluimm  - ALU source B select (1 = use immediate) (1 bit)
-//   regrt   - register destination select (0 = rd, 1 = rt) (1 bit)
-//
-// Hints:
-//   - Use a case statement on the opcode
-//   - Add a default case to handle undefined opcodes
-//------------------------------------------------------------------------------
+
 
 module CU(
     input [5:0] op,
@@ -663,7 +574,7 @@ module CU(
     output reg shift,
     output reg sext
 );
-    // TODO: Implement the control unit using a case statement
+    // Implement the control unit using a case statement
     always @(*)
     begin
         // Default values
@@ -871,21 +782,6 @@ endmodule
 // Regfile - Register File
 //------------------------------------------------------------------------------
 // Contains 32 general-purpose registers. Provides two read ports.
-// All registers should be initialized to 0.
-//
-// Inputs:
-//   rs      - source register 1 address (5 bits)
-//   rt      - source register 2 address (5 bits)
-//
-// Outputs:
-//   qa      - data from register rs (32 bits)
-//   qb      - data from register rt (32 bits)
-//
-// Hints:
-//   - Declare a reg array: reg [31:0] registers [0:31]
-//   - Use a for loop in initial block to set all registers to 0
-//   - Use always @(*) for combinational read logic
-//------------------------------------------------------------------------------
 
 module Regfile(
     input clk,
@@ -897,9 +793,9 @@ module Regfile(
     output reg [31:0] qa,
     output reg [31:0] qb
 );
-    // TODO: Declare register array
+    // Declare register array
     reg [31:0] registers [0:31];
-    // TODO: Initialize all 32 registers to 0
+    // Initialize all 32 registers to 0
     // loops through all registers and sets to 0
     integer i;
     initial
@@ -907,7 +803,7 @@ module Regfile(
         for(i = 0; i < 32; i = i + 1)
             registers[i] = 32'b0;
     end
-    // TODO: Read registers based on rs and rt
+    // Read registers based on rs and rt
     always @(*)
     begin
         qa = registers[rs];
@@ -930,19 +826,7 @@ endmodule
 // For R-type instructions, destination is rd.
 // For I-type instructions (like lw), destination is rt.
 //
-// Inputs:
-//   rd      - destination register for R-type (5 bits)
-//   rt      - destination register for I-type (5 bits)
-//   regrt   - select signal (0 = rd, 1 = rt)
-//
-// Outputs:
-//   destReg - selected destination register (5 bits)
-//
-// Hints:
-//   - Use if-else
-//   - When regrt = 0, select rd
-//   - When regrt = 1, select rt
-//------------------------------------------------------------------------------
+
 
 module Mux(
     input [4:0] a,
@@ -950,7 +834,7 @@ module Mux(
     input sel,
     output reg [4:0] out
 );
-    // TODO: Implement the multiplexer
+    // Implement the multiplexer
     always @(*)
     begin
         if(sel)
@@ -965,30 +849,18 @@ endmodule
 //------------------------------------------------------------------------------
 // Ext - Immediate Extender
 //------------------------------------------------------------------------------
-// Extends the 16-bit immediate value to 32 bits using sign extension.
-//
-// Inputs:
-//   imm     - 16-bit immediate value from instruction
-//
-// Outputs:
-//   imm32   - 32-bit sign-extended immediate
-//
-// Hints:
-//   - Use concatenation with replication
-//   - imm[15] is the sign bit
-//   - Replicate the sign bit 16 times and concatenate with original imm
-//------------------------------------------------------------------------------
+
 
 module Ext(
     input [15:0] imm,
     input sext,
     output reg [31:0] imm32
 );
-    // TODO: Implement sign extension
+    // Implement sign extension
     always @(*)
     begin
         if (sext)
-            imm32 = {{16{imm[15]}}, imm}; // slide 60 - sign extend
+            imm32 = {{16{imm[15]}}, imm}; // sign extend
         else
             imm32 = {16'b0, imm}; // zero-extend
     end
@@ -1109,35 +981,6 @@ endmodule
 //------------------------------------------------------------------------------
 // Stores all control signals and data from ID stage for use in EXE stage.
 // Updates on the positive edge of the clock.
-//
-// Inputs:
-//   clk     - clock signal
-//   wreg    - write register enable (1 bit)
-//   m2reg   - memory to register (1 bit)
-//   wmem    - write memory enable (1 bit)
-//   aluc    - ALU control (4 bits)
-//   aluimm  - ALU immediate select (1 bit)
-//   destReg - destination register (5 bits)
-//   qa      - register data A (32 bits)
-//   qb      - register data B (32 bits)
-//   imm32   - sign-extended immediate (32 bits)
-//
-// Outputs (active in EXE stage, prefix 'e'):
-//   ewreg   - write register enable
-//   em2reg  - memory to register
-//   ewmem   - write memory enable
-//   ealuc   - ALU control
-//   ealuimm - ALU immediate select
-//   edestReg - destination register
-//   eqa     - register data A
-//   eqb     - register data B
-//   eimm32  - sign-extended immediate
-//
-// Hints:
-//   - Use always @(posedge clk)
-//   - Use non-blocking assignments (<=)
-//   - Transfer each input to its corresponding output
-//------------------------------------------------------------------------------
 
 module IDEXE(
     input clk,
@@ -1189,7 +1032,7 @@ module IDEXE(
         ejal = 0;
         eshift = 0;
     end
-    // TODO: Implement the ID/EXE pipeline register
+    // Implement the ID/EXE pipeline register
     always @(posedge clk)
     begin
         if (stall)
@@ -1328,7 +1171,7 @@ module EXEMEM(
     output reg [31:0] malu,
     output reg [31:0] mb
 );
-    // TODO: Implement the EXE/MEM pipeline register
+    // Implement the EXE/MEM pipeline register
     always @(posedge clk)
     begin
         mwreg <= ewreg;
@@ -1398,7 +1241,7 @@ module MEMWB(
     output reg [31:0] walu,
     output reg [31:0] wdo
 );
-    // TODO: Implement the MEM/WB pipeline register
+    // Implement the MEM/WB pipeline register
     always @(posedge clk)
     begin
         wwreg <= mwreg;
